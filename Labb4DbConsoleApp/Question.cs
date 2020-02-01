@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace consoleLabb4Db
+namespace Labb4DbConsoleApp
 {
     public class Question
     {

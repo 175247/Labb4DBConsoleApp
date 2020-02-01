@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace consoleLabb4Db
+namespace Labb4DbConsoleApp
 {
     public class GameContext : DbContext
     {
@@ -32,9 +32,9 @@ namespace consoleLabb4Db
                 .HasForeignKey(q => q.QuestionId);
 
             modelBuilder.Entity<Question>()
-                .ToContainer("Questions");
+                .ToContainer("QuestionsContainer");
             modelBuilder.Entity<Answer>()
-                .ToContainer("Answers");
+                .ToContainer("AnswersContainer");
         }
 
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace consoleLabb4Db
+namespace Labb4DbConsoleApp
 {
     class Program
     {

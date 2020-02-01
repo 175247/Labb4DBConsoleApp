@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Labb4DbConsoleApp;
 using Microsoft.EntityFrameworkCore;
 
-namespace consoleLabb4Db
+namespace Labb4DbConsoleApp
 {
+    //public enum ErrorCode { QuestionIsSet, AnswersAreSet, AnswerOptionsNotSet, CorrectAnswerIsSet, CorrectAnswerNotSet, QuestionNotSet }
     public class Game
     {
         GameContext gameContext;
+        GameClient gameClient;
         List<Question> questionList;
         List<Answer> answersList;
 
@@ -19,52 +24,16 @@ namespace consoleLabb4Db
         {
             gameContext.Database.EnsureCreated();
             this.gameContext = gameContext;
+            this.gameClient = gameClient;
             questionList = gameContext.questions.ToList();
             answersList = gameContext.answers.ToList();
-            /*
-            var answer = new Answer();
-            var question = new Question
-            {
-                id = Guid.NewGuid().ToString(),
-                TheQuestion = "What is the colour of the sea?"
-            };
-            question.Answers = new List<Answer>();
-            gameContext.answers.Add(new Answer
-                {
-                    id = Guid.NewGuid().ToString(),
-                    TheAnswer = "Green",
-                    IsCorrectAnswer = false,
-                    QuestionId = question.id
-                });
-            gameContext.answers.Add(new Answer
-            {
-                id = Guid.NewGuid().ToString(),
-                TheAnswer = "Red",
-                IsCorrectAnswer = false,
-                QuestionId = question.id
-            });
-            gameContext.answers.Add(new Answer
-            {
-                id = Guid.NewGuid().ToString(),
-                TheAnswer = "Blue",
-                IsCorrectAnswer = true,
-                QuestionId = question.id
-            });
-            gameContext.answers.Add(new Answer
-            {
-                id = Guid.NewGuid().ToString(),
-                TheAnswer = "Purple",
-                IsCorrectAnswer = false,
-                QuestionId = question.id,
-            });
-            gameContext.questions.Add(question);
-            gameContext.SaveChanges();
-            */
         }
 
         public void Run()
         {
+
             int number;
+
             do
             {
                 Console.WriteLine("[1] Start game\n" +
@@ -78,290 +47,361 @@ namespace consoleLabb4Db
                 switch (number)
                 {
                     case 1:
-                        PlayGame();
+                        gameClient.PlayGame();
                         break;
                     case 2:
-                        AddQuestions();
+                        gameClient.AddQuestions();
                         break;
                     case 3:
-                        DeleteQuestion(questionList);
+                        gameClient.DeleteQuestion(questionList);
                         break;
                     case 4:
                         Environment.Exit(0);
                         break;
                     default:
+                        Console.Clear();
                         Console.WriteLine("Invalid input...");
                         break;
                 }
             } while (number != 4);
         }
 
-        private void AddQuestions()
-        {
-            finishedQuestion = false;
-            isCorrectAnswerSet = false;
-            var newQuestion = new Question();
-            var newAnswerList = new List<Answer>();
-            newQuestion.id = Guid.NewGuid().ToString();
-            newQuestion.Answers = newAnswerList;
+        //private void AddQuestions()
+        //{
+        //    finishedQuestion = false;
+        //    isCorrectAnswerSet = false;
+        //    bool isQuestionSet = false;
+        //    bool isAllAnswersSet = false;
+        //    var newQuestion = new Question();
+        //    var newAnswerList = new List<Answer>();
+        //    newQuestion.id = Guid.NewGuid().ToString();
+        //    newQuestion.Answers = newAnswerList;
+        //
+        //    Console.Clear();
+        //    do
+        //    {
+        //        Console.WriteLine($"[Q]: Enter a question.\n" +
+        //            $"[A]: Enter 4 possible answers.\n" +
+        //            $"[R]: Enter the correct answer to the question.\n" +
+        //            $"[F]: Finish question and upload to cloud.\n" +
+        //            $"Answers cannot be editted once submitted.\n" +
+        //            $"Press [E] to exit.\n");
+        //
+        //        string userInput = Console.ReadLine();
+        //        switch (userInput.ToUpper())
+        //        {
+        //            case "Q":
+        //                if (isQuestionSet == false)
+        //                {
+        //                    Console.Clear();
+        //                    Console.WriteLine("Enter the question:");
+        //                    newQuestion.TheQuestion = ValidateInput();
+        //                    Console.Clear();
+        //                    Console.WriteLine("Question set");
+        //                    isQuestionSet = true;
+        //                }
+        //                else
+        //                {
+        //                    
+        //                    Console.Clear();
+        //                    Console.WriteLine("The question is already set.");
+        //                    DisplayErrorCodes(ErrorCode.QuestionIsSet);
+        //                }
+        //                break;
+        //            case "A":
+        //                if (isAllAnswersSet == false)
+        //                {
+        //                    AddAnswers(newQuestion, newAnswerList);
+        //                    isAllAnswersSet = true;
+        //                }
+        //                else
+        //                {
+        //                    DisplayErrorCodes(ErrorCode.AnswersAreSet);
+        //                }
+        //                break;
+        //            case "R":
+        //                if (newQuestion.Answers.Count == 0)
+        //                {
+        //                    DisplayErrorCodes(ErrorCode.AnswerOptionsNotSet);
+        //                }
+        //                else if (isCorrectAnswerSet == true)
+        //                {
+        //                    DisplayErrorCodes(ErrorCode.CorrectAnswerIsSet);
+        //                }
+        //                else
+        //                {
+        //                    SetCorrectAnswer(newQuestion, newAnswerList);
+        //                }
+        //                break;
+        //            case "F":
+        //                if (isAllAnswersSet == false)
+        //                {
+        //                    DisplayErrorCodes(ErrorCode.AnswerOptionsNotSet);
+        //                    break;
+        //                }
+        //                else if (newQuestion.CorrectAnswer == null)
+        //                {
+        //                    DisplayErrorCodes(ErrorCode.CorrectAnswerNotSet);
+        //                    break;
+        //                }
+        //                else if (newQuestion.TheQuestion == null)
+        //                {
+        //                    DisplayErrorCodes(ErrorCode.QuestionNotSet);
+        //                    break;
+        //                }
+        //                else
+        //                {
+        //                    gameContext.questions.Add(newQuestion);
+        //
+        //                    SaveChangesAndUpdateLists();
+        //                    finishedQuestion = true;
+        //                    Console.Clear();
+        //                    Console.WriteLine("Question added to database.\n");
+        //                }
+        //                break;
+        //            case "E":
+        //                Console.Clear();
+        //                Console.WriteLine("Returning to menu.");
+        //                Run();
+        //                break;
+        //            default:
+        //                Console.Clear();
+        //                Console.WriteLine("Invalid input");
+        //                break;
+        //
+        //        }
+        //    } while (finishedQuestion == false || isCorrectAnswerSet == false);
+        //}
 
-            Console.Clear();
-            do
-            {
-                Console.WriteLine($"[Q]: Enter or edit question.\n" +
-                    $"[A]: Enter/Edit answer option A.\n" +
-                    $"[B]: Enter/Edit answer option B.\n" +
-                    $"[C]: Enter/Edit answer option C.\n" +
-                    $"[D]: Enter/Edit answer option D.\n" +
-                    $"[R]: Enter/Edit the correct answer to the question.\n" +
-                    $"[F]: Finish question and upload to cloud.\n" +
-                    $"Press [E] to exit.\n");
+        //private void DisplayErrorCodes(ErrorCode errorCode)
+        //{
+        //    Console.Clear();
+        //    switch (errorCode)
+        //    {
+        //        case ErrorCode.QuestionIsSet:
+        //            Console.WriteLine("The question is already set.\n");
+        //            break;
+        //        case ErrorCode.QuestionNotSet:
+        //            Console.WriteLine("The question is not set yet.\n");
+        //            break;
+        //        case ErrorCode.AnswersAreSet:
+        //            Console.WriteLine("All answers are already set.\n");
+        //            break;
+        //        case ErrorCode.AnswerOptionsNotSet:
+        //            Console.WriteLine("The answer options are not set yet.\n");
+        //            break;
+        //        case ErrorCode.CorrectAnswerIsSet:
+        //            Console.WriteLine("The correct answer is already set\n");
+        //            break;
+        //        case ErrorCode.CorrectAnswerNotSet:
+        //            Console.WriteLine("The correct answer is not set yet.\n");
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
 
-                string userInput = Console.ReadLine();
+        //private void AddAnswers(Question newQuestion, List<Answer> newAnswerList)
+        //{
+        //    for (int i = 1; i <= 4; i++)
+        //    {
+        //        Console.Clear();
+        //        Console.WriteLine($"Question: {newQuestion.TheQuestion}");
+        //        Console.WriteLine($"Enter answer option {i}:");
 
-                switch (userInput.ToUpper())
-                {
-                    case "Q":
-                        Console.WriteLine("Enter the question:");
-                        newQuestion.TheQuestion = ValidateInput();
-                        Console.Clear();
-                        Console.WriteLine("Question set");
-                        break;
-                    case "A":
-                        Console.WriteLine("Enter answer option A:");
-                        AddNewAnswer(newQuestion, newAnswerList);
-                        Console.WriteLine("Option A set");
-                        break;
-                    case "B":
-                        Console.WriteLine("Enter answer option B:");
-                        AddNewAnswer(newQuestion, newAnswerList);
-                        Console.WriteLine("Option B set");
-                        break;
-                    case "C":
-                        Console.WriteLine("Enter answer option C:");
-                        AddNewAnswer(newQuestion, newAnswerList);
-                        Console.WriteLine("Option C set");
-                        break;
-                    case "D":
-                        Console.WriteLine("Enter answer option D:");
-                        AddNewAnswer(newQuestion, newAnswerList);
-                        Console.WriteLine("Option D set");
-                        break;
-                    case "R":
-                        SetCorrectAnswer(newQuestion, newAnswerList);
-                        Console.Clear();
-                        Console.WriteLine("Correct answer set");
-                        break;
-                    case "F":
-                        if (newQuestion.Answers.Contains(null))
-                        {
-                            Console.WriteLine("All answer options are not set.");
-                            break;
-                        }
-                        else if (newQuestion.CorrectAnswer == null)
-                        {
-                            Console.WriteLine("The correct answer is not set.");
-                            break;
-                        }
-                        else if (newQuestion.TheQuestion == null)
-                        {
-                            Console.WriteLine("The question is not set.");
-                            break;
-                        }
-                        else
-                        {
-                            gameContext.questions.Add(newQuestion);
-                            gameContext.SaveChanges();
-                            questionList = gameContext.questions.ToList();
-                            finishedQuestion = true;
-                            Console.Clear();
-                            Console.WriteLine("Question added to database.");
-                        }
-                        break;
-                    case "E":
-                        newQuestion = null;
-                        Console.Clear();
-                        Console.WriteLine("Returning to menu.");
-                        Run();
-                        break;
-                    default:
-                        Console.Clear();
-                        Console.WriteLine("Invalid input");
-                        break;
+        //        newAnswerList.Add(new Answer
+        //        {
+        //            id = Guid.NewGuid().ToString(),
+        //            TheAnswer = ValidateInput(),
+        //            QuestionId = newQuestion.id
+        //        });
 
-                }
-            } while (finishedQuestion == false || isCorrectAnswerSet == false);
-        }
+        //        Console.Clear();
+        //        Console.WriteLine($"Option {i} set");
+        //    }
+        //}
 
-        private void AddNewAnswer(Question newQuestion, List<Answer> newAnswerList)
-        {
-            newAnswerList.Add(new Answer
-            {
-                id = Guid.NewGuid().ToString(),
-                TheAnswer = ValidateInput(),
-                Question = newQuestion,
-                QuestionId = newQuestion.id
-            });
-            Console.Clear();
-        }
-
-        private void SetCorrectAnswer(Question newQuestion, List<Answer> newAnswerList)
-        {
-            do
-            {
-                Console.WriteLine("Which is the correct answer?\n" +
-                    $"[A]: {newAnswerList[0].TheAnswer}\n" +
-                    $"[B]: {newAnswerList[1].TheAnswer}\n" +
-                    $"[C]: {newAnswerList[2].TheAnswer}\n" +
-                    $"[D]: {newAnswerList[3].TheAnswer}\n\n" +
-                    "Select either A, B, C or D:");
+        //private void SetCorrectAnswer(Question newQuestion, List<Answer> newAnswerList)
+        //{
+        //    do
+        //    {
+        //        Console.Clear();
+        //        Console.WriteLine("Which is the correct answer?\n" +
+        //            $"[Q]: {newQuestion.TheQuestion}\n" +
+        //            $"[A]: {newAnswerList[0].TheAnswer}\n" +
+        //            $"[B]: {newAnswerList[1].TheAnswer}\n" +
+        //            $"[C]: {newAnswerList[2].TheAnswer}\n" +
+        //            $"[D]: {newAnswerList[3].TheAnswer}\n\n" +
+        //            "Select either A, B, C or D:");
         
-                string userInput = ValidateInput();
-                switch (userInput.ToUpper())
-                {
-                    case "A":
-                        newAnswerList[0].IsCorrectAnswer = true;
-                        newQuestion.CorrectAnswer = newAnswerList[0];
-                        isCorrectAnswerSet = true;
-                        break;
-                    case "B":
-                        newAnswerList[1].IsCorrectAnswer = true;
-                        newQuestion.CorrectAnswer = newAnswerList[1];
-                        isCorrectAnswerSet = true;
-                        break;
-                    case "C":
-                        newAnswerList[2].IsCorrectAnswer = true;
-                        newQuestion.CorrectAnswer = newAnswerList[2];
-                        isCorrectAnswerSet = true;
-                        break;
-                    case "D":
-                        newAnswerList[3].IsCorrectAnswer = true;
-                        newQuestion.CorrectAnswer = newAnswerList[3];
-                        isCorrectAnswerSet = true;
-                        break;
-                    default:
-                        Console.Clear();
-                        Console.WriteLine("Invalid answer.");
-                        break;
-                }
+        //        string userInput = ValidateInput();
+        //        switch (userInput.ToUpper())
+        //        {
+        //            case "A":
+        //                newAnswerList[0].IsCorrectAnswer = true;
+        //                newQuestion.CorrectAnswer = newAnswerList[0];
+        //                isCorrectAnswerSet = true;
+        //                break;
+        //            case "B":
+        //                newAnswerList[1].IsCorrectAnswer = true;
+        //                newQuestion.CorrectAnswer = newAnswerList[1];
+        //                isCorrectAnswerSet = true;
+        //                break;
+        //            case "C":
+        //                newAnswerList[2].IsCorrectAnswer = true;
+        //                newQuestion.CorrectAnswer = newAnswerList[2];
+        //                isCorrectAnswerSet = true;
+        //                break;
+        //            case "D":
+        //                newAnswerList[3].IsCorrectAnswer = true;
+        //                newQuestion.CorrectAnswer = newAnswerList[3];
+        //                isCorrectAnswerSet = true;
+        //                break;
+        //            default:
+        //                Console.Clear();
+        //                Console.WriteLine("Invalid answer.");
+        //                break;
+        //        }
         
-            } while (isCorrectAnswerSet == false);
-        }
+        //    } while (isCorrectAnswerSet == false);
+        //    Console.Clear();
+        //    Console.WriteLine("Correct answer set\n");
+        //}
 
-        private void DeleteQuestion(List<Question> questions)
-        {
-            Console.Clear();
-            Console.WriteLine("Which question would you like to delete?");
+        //private void DeleteQuestion(List<Question> questions)
+        //{
+        //    Console.Clear();
+        //    Console.WriteLine("Which question would you like to delete?\n" +
+        //        "An invalid input will return you to the main menu.");
 
-            int count = 1;
-            foreach (var question in questions)
-            {
-                Console.WriteLine($"{count}. {question.TheQuestion}");
-                count++;
-            }
+        //    int count = 1;
+        //    foreach (var question in questions)
+        //    {
+        //        Console.WriteLine($"{count}. {question.TheQuestion}");
+        //        count++;
+        //    }
 
-            int choice = 1;
-            string userInput = Console.ReadLine();
+        //    int choice = 1;
+        //    string userInput = Console.ReadLine();
 
-            try
-            {
-                Int32.TryParse(userInput, out choice);
+        //    try
+        //    {
+        //        Int32.TryParse(userInput, out choice);
 
-                var answersToDelete = gameContext.answers.
-                    Where(a => a.QuestionId == questions[choice - 1].id);
+        //        var answersToDelete = gameContext.answers.
+        //            Where(a => a.QuestionId == questions[choice - 1].id);
 
-                gameContext.answers.RemoveRange(answersToDelete);
-                gameContext.questions.Remove(questions[choice - 1]);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Invalid input");
-            }
-            gameContext.SaveChanges();
-            questionList = gameContext.questions.ToList();
-            answersList = gameContext.answers.ToList();
-        }
+        //        foreach (var answer in answersToDelete)
+        //        {
+        //            gameContext.answers.Remove(answer);
+        //        }
 
-        private string ValidateInput()
-        {
-            bool acceptedString = false;
-            string userInput = "Unable To Validate Input";
-            while (acceptedString == false)
-            {
-                userInput = Console.ReadLine();
+        //        gameContext.questions.Remove(questions[choice - 1]);
+        //        Console.Clear();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        Console.Clear();
+        //        Console.WriteLine("Invalid input!\n" +
+        //            "Returning to main menu.\n");
+        //    }
+        //    SaveChangesAndUpdateLists();
+        //}
 
-                if (string.IsNullOrEmpty(userInput) ||
-                    string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Invalid Input, try again.");
-                    Console.Write("> ");
-                }
-                else
-                {
-                    acceptedString = true;
-                    return userInput;
-                }
-            }
-            return userInput;
-        }
-        public void PlayGame()
-        {
-            questionList = gameContext.questions.ToList();
-            answersList = gameContext.answers.ToList();
+        //private void SaveChangesAndUpdateLists()
+        //{
+        //    Console.WriteLine("Updating database...");
+        //    gameContext.SaveChanges();
+        //    questionList = gameContext.questions.ToList();
+        //    answersList = gameContext.answers.ToList();
+        //    Console.WriteLine("Finished!\n");
+        //}
 
-                correctAnswer = false;
-            foreach (var question in questionList)
-            {
-                var answerList = question.Answers.ToList();
+        //private string ValidateInput()
+        //{
+        //    bool acceptedString = false;
+        //    string userInput = "Unable To Validate Input";
+        //    while (acceptedString == false)
+        //    {
+        //        userInput = Console.ReadLine();
 
-                do
-                {
-                    Console.WriteLine($"Q: {question.TheQuestion}\n\n");
-                    foreach (var answer in answerList)
-                    {
-                        Console.WriteLine(answer.TheAnswer);
-                    }
+        //        if (string.IsNullOrEmpty(userInput) ||
+        //            string.IsNullOrWhiteSpace(userInput))
+        //        {
+        //            Console.WriteLine("Invalid Input, try again.");
+        //            Console.Write("> ");
+        //        }
+        //        else
+        //        {
+        //            acceptedString = true;
+        //            return userInput;
+        //        }
+        //    }
+        //    return userInput;
+        //}
 
-                    string userInput = Console.ReadLine();
-                    switch (userInput.ToUpper())
-                    {
-                        case "A":
-                            correctAnswer = ValidateAnswer(answerList[0]);
-                            Console.WriteLine($"\n\n***THIS WAS THE ANSWER: {correctAnswer} ***\n\n");
-                            break;
-                        case "B":
-                            correctAnswer = ValidateAnswer(answerList[1]);
-                            break;
-                        case "C":
-                            correctAnswer = ValidateAnswer(answerList[2]);
-                            break;
-                        case "D":
-                            correctAnswer = ValidateAnswer(answerList[3]);
-                            break;
-                        case "E":
-                            Run();
-                            break;
-                        default:
-                            Console.WriteLine("Invalid input");
-                            break;
-                    }
-                    if (correctAnswer == false)
-                    {
-                        Console.WriteLine("Try again! Not the correct answer!");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Correct!");
-                        correctAnswer = true;
-                    }
-                } while (correctAnswer == false);
-            }
-            Console.Clear();
-        }
+        //public void PlayGame()
+        //{
+        //    Console.Clear();
+        //    questionList = gameContext.questions.ToList();
+        //    answersList = gameContext.answers.ToList();
+        //    correctAnswer = false;
+            
+        //    foreach (var question in questionList)
+        //    {
+        //        var thisQuestionsAnswerList = question.Answers.ToList();
 
-        private bool ValidateAnswer(Answer answer)
-        {
-            return answer.IsCorrectAnswer;
-        }
+        //        do
+        //        {
+        //            Console.WriteLine($"Q: {question.TheQuestion}\n" +
+        //                $"[A]: {thisQuestionsAnswerList[0].TheAnswer}\n" +
+        //                $"[B]: {thisQuestionsAnswerList[1].TheAnswer}\n" +
+        //                $"[C]: {thisQuestionsAnswerList[2].TheAnswer}\n" +
+        //                $"[D]: {thisQuestionsAnswerList[3].TheAnswer}");
+
+
+        //            string userInput = Console.ReadLine();
+        //            switch (userInput.ToUpper())
+        //            {
+        //                case "A":
+        //                    correctAnswer = ValidateAnswer(thisQuestionsAnswerList[0]);
+        //                    break;
+        //                case "B":
+        //                    correctAnswer = ValidateAnswer(thisQuestionsAnswerList[1]);
+        //                    break;
+        //                case "C":
+        //                    correctAnswer = ValidateAnswer(thisQuestionsAnswerList[2]);
+        //                    break;
+        //                case "D":
+        //                    correctAnswer = ValidateAnswer(thisQuestionsAnswerList[3]);
+        //                    break;
+        //                case "E":
+        //                    Run();
+        //                    break;
+        //                default:
+        //                    Console.WriteLine("Invalid input");
+        //                    break;
+        //            }
+        //            if (correctAnswer == false)
+        //            {
+        //                Console.WriteLine("Try again! Not the correct answer!");
+        //            }
+        //            else
+        //            {
+        //                Console.Clear();
+        //                Console.WriteLine("Correct!");
+        //                correctAnswer = true;
+        //            }
+        //        } while (correctAnswer == false);
+        //    }
+        //    Console.WriteLine($"End of questions. Good job!");
+        //    Thread.Sleep(3000);
+        //    Console.Clear();
+        //}
+
+        //private bool ValidateAnswer(Answer answer)
+        //{
+        //    return answer.IsCorrectAnswer;
+        //}
     }
 }

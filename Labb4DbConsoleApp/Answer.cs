@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace consoleLabb4Db
+namespace Labb4DbConsoleApp
 {
     public class Answer
     {
