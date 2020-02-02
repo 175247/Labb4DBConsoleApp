@@ -110,8 +110,16 @@ namespace Labb4DbConsoleApp
                 }
                 else
                 {
-                    acceptedString = true;
-                    return userInput;
+                    if (userInput.Length == 1)
+                    {
+                        acceptedString = true;
+                        return userInput.ToUpper();
+                    }
+                    else
+                    {
+                        acceptedString = true;
+                        return userInput;
+                    }
                 }
             }
             return userInput;
@@ -147,7 +155,7 @@ namespace Labb4DbConsoleApp
         }
 
 
-        public void CheckIfCanAddQuestion()
+        public void AddNewQuestion()
         {
             if (IsQuestionSet == false)
             {
@@ -166,7 +174,7 @@ namespace Labb4DbConsoleApp
             }
         }
 
-        public void CheckIfCanAddAnswer()
+        public void AddNewAnswer()
         {
             if (IsQuestionSet == false)
             {
@@ -198,7 +206,7 @@ namespace Labb4DbConsoleApp
             }
         }
 
-        public void CheckIfCanSetCorrectAnswer()
+        public void SetCorrectAnswerIfPossible()
         {
             if (newQuestion.Answers.Count == 0)
             {
@@ -214,7 +222,7 @@ namespace Labb4DbConsoleApp
             }
         }
 
-        public void CheckIfCanUploadToDatabase()
+        public void UploadToDatabase()
         {
             if (IsAllAnswersSet == false)
             {

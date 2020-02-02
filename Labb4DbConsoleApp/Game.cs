@@ -78,16 +78,16 @@ namespace Labb4DbConsoleApp
                 switch (userInput.ToUpper())
                 {
                     case "Q":
-                        gameClient.CheckIfCanAddQuestion();
+                        gameClient.AddNewQuestion();
                         break;
                     case "A":
-                        gameClient.CheckIfCanAddAnswer();
+                        gameClient.AddNewAnswer();
                         break;
                     case "R":
-                        gameClient.CheckIfCanSetCorrectAnswer();
+                        gameClient.SetCorrectAnswerIfPossible();
                         break;
                     case "F":
-                        gameClient.CheckIfCanUploadToDatabase();
+                        gameClient.UploadToDatabase();
                         break;
                     case "E":
                         Console.Clear();
