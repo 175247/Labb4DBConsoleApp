@@ -14,9 +14,6 @@ namespace Labb4DbConsoleApp
         GameContext gameContext;
         GameClient gameClient;
 
-        //bool finishedQuestion = false;
-        //bool isCorrectAnswerSet = false;
-        bool correctAnswer = false;
         public Game(GameContext gameContext)
         {
             Console.WriteLine("Loading...");
@@ -48,7 +45,7 @@ namespace Labb4DbConsoleApp
                         AddQuestionsAndAnswers();
                         break;
                     case 3:
-                        DeleteQuestion(gameClient.questionList);
+                        DeleteQuestion();
                         break;
                     case 4:
                         Environment.Exit(0);
@@ -63,14 +60,9 @@ namespace Labb4DbConsoleApp
 
         private void AddQuestionsAndAnswers()
         {
-            gameClient.IsfinishedQuestion = false;
-            gameClient.IsCorrectAnswerSet = false;
-            bool isQuestionSet = false;
-            bool isAllAnswersSet = false;
-            var newQuestion = new Question();
-            var newAnswerList = new List<Answer>();
-            newQuestion.id = Guid.NewGuid().ToString();
-            newQuestion.Answers = newAnswerList;
+            gameClient.newQuestion = new Question();
+            gameClient.newAnswerList = new List<Answer>();
+            gameClient.ResetForNewQuestion();
         
             Console.Clear();
             do
@@ -79,79 +71,23 @@ namespace Labb4DbConsoleApp
                     $"[A]: Enter 4 possible answers.\n" +
                     $"[R]: Enter the correct answer to the question.\n" +
                     $"[F]: Finish question and upload to cloud.\n" +
-                    $"Answers cannot be editted once submitted.\n" +
+                    $"Answers cannot be editted once submitted.\n\n" +
                     $"Press [E] to exit.\n");
         
                 string userInput = Console.ReadLine();
                 switch (userInput.ToUpper())
                 {
                     case "Q":
-                        if (isQuestionSet == false)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Enter the question:");
-                            newQuestion.TheQuestion = gameClient.ValidateInput();
-                            Console.Clear();
-                            Console.WriteLine("Question set\n");
-                            isQuestionSet = true;
-                        }
-                        else
-                        {
-                            Console.Clear();
-                            Console.WriteLine("The question is already set.");
-                            gameClient.DisplayErrorCodes(ErrorCode.QuestionIsSet);
-                        }
+                        gameClient.CheckIfCanAddQuestion();
                         break;
                     case "A":
-                        if (isAllAnswersSet == false)
-                        {
-                            gameClient.AddAnswers(newQuestion, newAnswerList);
-                            isAllAnswersSet = true;
-                        }
-                        else
-                        {
-                            gameClient.DisplayErrorCodes(ErrorCode.AnswersAreSet);
-                        }
+                        gameClient.CheckIfCanAddAnswer();
                         break;
                     case "R":
-                        if (newQuestion.Answers.Count == 0)
-                        {
-                            gameClient.DisplayErrorCodes(ErrorCode.AnswerOptionsNotSet);
-                        }
-                        else if (gameClient.IsCorrectAnswerSet == true)
-                        {
-                            gameClient.DisplayErrorCodes(ErrorCode.CorrectAnswerIsSet);
-                        }
-                        else
-                        {
-                            gameClient.SetCorrectAnswer(newQuestion, newAnswerList);
-                        }
+                        gameClient.CheckIfCanSetCorrectAnswer();
                         break;
                     case "F":
-                        if (isAllAnswersSet == false)
-                        {
-                            gameClient.DisplayErrorCodes(ErrorCode.AnswerOptionsNotSet);
-                            break;
-                        }
-                        else if (newQuestion.CorrectAnswer == null)
-                        {
-                            gameClient.DisplayErrorCodes(ErrorCode.CorrectAnswerNotSet);
-                            break;
-                        }
-                        else if (newQuestion.TheQuestion == null)
-                        {
-                            gameClient.DisplayErrorCodes(ErrorCode.QuestionNotSet);
-                            break;
-                        }
-                        else
-                        {
-                            gameContext.questions.Add(newQuestion);
-
-                            gameClient.SaveChangesAndUpdateLists();
-                            gameClient.IsfinishedQuestion = true;
-                            Console.Clear();
-                            Console.WriteLine("Question added to database.\n");
-                        }
+                        gameClient.CheckIfCanUploadToDatabase();
                         break;
                     case "E":
                         Console.Clear();
@@ -167,44 +103,21 @@ namespace Labb4DbConsoleApp
             } while (gameClient.IsfinishedQuestion == false || gameClient.IsCorrectAnswerSet == false);
         }
 
-        private void DeleteQuestion(List<Question> questions)
+        private void DeleteQuestion()
         {
             Console.Clear();
             Console.WriteLine("Which question would you like to delete?\n" +
                 "An invalid input will return you to the main menu.");
 
+            var questionList = gameClient.GetQuestions();
             int count = 1;
-            foreach (var question in questions)
+            foreach (var question in questionList)
             {
                 Console.WriteLine($"{count}. {question.TheQuestion}");
                 count++;
             }
 
-            int choice = 1;
-            string userInput = Console.ReadLine();
-
-            try
-            {
-                Int32.TryParse(userInput, out choice);
-
-                var answersToDelete = gameContext.answers.
-                    Where(a => a.QuestionId == questions[choice - 1].id);
-
-                foreach (var answer in answersToDelete)
-                {
-                    gameContext.answers.Remove(answer);
-                }
-
-                gameContext.questions.Remove(questions[choice - 1]);
-                Console.Clear();
-                gameClient.SaveChangesAndUpdateLists();
-            }
-            catch (Exception)
-            {
-                Console.Clear();
-                Console.WriteLine("Invalid input!\n" +
-                    "Returning to main menu.\n");
-            }
+            gameClient.DeleteQuestion(questionList);
         }
 
         public void PlayGame()
@@ -212,9 +125,10 @@ namespace Labb4DbConsoleApp
             Console.Clear();
             gameClient.UpdateGameResources_Questions();
             gameClient.UpdateGameResources_Answers();
-            correctAnswer = false;
+            gameClient.CorrectAnswer = false;
+            var questionList = gameClient.GetQuestions();
             
-            foreach (var question in gameClient.questionList)
+            foreach (var question in questionList)
             {
                 var thisQuestionsAnswerList = question.Answers.ToList();
 
@@ -224,45 +138,24 @@ namespace Labb4DbConsoleApp
                         $"[A]: {thisQuestionsAnswerList[0].TheAnswer}\n" +
                         $"[B]: {thisQuestionsAnswerList[1].TheAnswer}\n" +
                         $"[C]: {thisQuestionsAnswerList[2].TheAnswer}\n" +
-                        $"[D]: {thisQuestionsAnswerList[3].TheAnswer}");
-
+                        $"[D]: {thisQuestionsAnswerList[3].TheAnswer}\n\n" +
+                        $"[S]: Skip question\n");
 
                     string userInput = Console.ReadLine();
-                    switch (userInput.ToUpper())
+                    if (userInput.ToUpper() == "S")
                     {
-                        case "A":
-                            correctAnswer = gameClient.ValidateAnswer(thisQuestionsAnswerList[0]);
-                            break;
-                        case "B":
-                            correctAnswer = gameClient.ValidateAnswer(thisQuestionsAnswerList[1]);
-                            break;
-                        case "C":
-                            correctAnswer = gameClient.ValidateAnswer(thisQuestionsAnswerList[2]);
-                            break;
-                        case "D":
-                            correctAnswer = gameClient.ValidateAnswer(thisQuestionsAnswerList[3]);
-                            break;
-                        case "E":
-                            Run();
-                            break;
-                        default:
-                            Console.WriteLine("Invalid input");
-                            break;
-                    }
-                    if (correctAnswer == false)
-                    {
-                        Console.WriteLine("Try again! Not the correct answer!\n");
+                        Console.Clear();
+                        Console.WriteLine("Question skipped.");
+                        break;
                     }
                     else
                     {
-                        Console.Clear();
-                        Console.WriteLine("Correct!\n");
-                        correctAnswer = true;
+                        gameClient.CheckUserAnswer(thisQuestionsAnswerList, userInput);
                     }
-                } while (correctAnswer == false);
+                } while (gameClient.CorrectAnswer == false);
             }
-            Console.WriteLine($"End of questions. Good job!" +
-                $"Loading main menu...");
+            Console.WriteLine("End of questions. Good job!\n\n" +
+                "Loading main menu...");
             Thread.Sleep(3000);
             Console.Clear();
         }
