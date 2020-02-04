@@ -7,9 +7,8 @@ namespace Labb4DbConsoleApp
 {
     public class GameContext : DbContext
     {
-
-        public DbSet<Question> questions { get; set; }
-        public DbSet<Answer> answers { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
 
         private string connectionURI = "https://localhost:8081";
         private string connectionKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
@@ -36,6 +35,5 @@ namespace Labb4DbConsoleApp
             modelBuilder.Entity<Answer>()
                 .ToContainer("AnswersContainer");
         }
-
     }
 }
