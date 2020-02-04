@@ -20,6 +20,7 @@ namespace Labb4DbConsoleApp
 
         public void Run()
         {
+            Console.WriteLine("Starting up...");
             MainMenu();
         }
 
