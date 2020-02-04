@@ -31,8 +31,8 @@ namespace Labb4DbConsoleApp
                         $"[B]: {thisQuestionsAnswerList[1].TheAnswer}\n" +
                         $"[C]: {thisQuestionsAnswerList[2].TheAnswer}\n" +
                         $"[D]: {thisQuestionsAnswerList[3].TheAnswer}\n\n" +
-                        $"[S]: Skip question\n" +
-                        $"[E]: Abort and return to main menu.");
+                        $"[S]: Skip question.\n" +
+                        $"[E]: Cancel session and return to main menu.");
 
                     var userInput = Console.ReadKey().Key;
 
@@ -40,7 +40,7 @@ namespace Labb4DbConsoleApp
                     {
                         Console.Clear();
                         Console.WriteLine("Question skipped.\n" +
-                            $"Correct answer was \"{question.CorrectAnswer.TheAnswer}\"\n");
+                            $"The correct answer was \"{question.CorrectAnswer.TheAnswer}\".\n");
                         Thread.Sleep(3000);
                         break;
                     }
@@ -77,7 +77,7 @@ namespace Labb4DbConsoleApp
                     Navigation();
                     break;
                 default:
-                    Console.WriteLine("Invalid input");
+                    Console.WriteLine("Invalid input.");
                     break;
             }
             if (CorrectAnswer == false)

@@ -14,10 +14,10 @@ namespace Labb4DbConsoleApp
             ConsoleKey input;
             do
             {
-                Console.WriteLine("[P] Play game\n" +
-                    "[A] Add your own question\n" +
-                    "[D] Delete a question\n" +
-                    "[E] Exit program");
+                Console.WriteLine("[P] Play game.\n" +
+                    "[A] Add your own question.\n" +
+                    "[D] Delete a question.\n" +
+                    "[E] Exit program.");
 
                 input = Console.ReadKey().Key;
                 switch (input)
@@ -36,7 +36,7 @@ namespace Labb4DbConsoleApp
                         break;
                     default:
                         Console.Clear();
-                        Console.WriteLine("Invalid input\n");
+                        Console.WriteLine("Invalid input.\n");
                         break;
                 }
             } while (input != ConsoleKey.E);

@@ -52,7 +52,7 @@ namespace Labb4DbConsoleApp
             catch (Exception)
             {
                 Console.Clear();
-                Console.WriteLine("Invalid input\n" +
+                Console.WriteLine("Invalid input.\n" +
                     "Returning to main menu.\n");
             }
             Navigation();

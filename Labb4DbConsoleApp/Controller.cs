@@ -20,6 +20,7 @@ namespace Labb4DbConsoleApp
 
         public void Run()
         {
+            Console.WriteLine("Starting up, hold tight!");
             MainMenu();
         }
 
@@ -83,7 +84,7 @@ namespace Labb4DbConsoleApp
         public string ValidateInput()
         {
             bool acceptedString = false;
-            string userInput = "Unable To Validate Input";
+            string userInput = "Unable To Validate Input.";
             while (acceptedString == false)
             {
                 userInput = Console.ReadLine();
