@@ -17,6 +17,7 @@ namespace Labb4DbConsoleApp
         {
             Console.Clear();
             CorrectAnswer = false;
+            Console.WriteLine("Updating resources...");
             questionsList = GetQuestions();
 
             foreach (var question in questionsList)
@@ -76,20 +77,26 @@ namespace Labb4DbConsoleApp
                 case ConsoleKey.E:
                     Navigation();
                     break;
+                case ConsoleKey.Escape:
+                    Console.WriteLine("\nInvalid input.\n");
+                    Console.ReadKey(true);
+                    break;
                 default:
-                    Console.WriteLine("Invalid input.");
+                    Console.WriteLine("\nInvalid input.\n");
+                    Console.ReadKey(true);
                     break;
             }
             if (CorrectAnswer == false)
             {
                 Console.Clear();
-                Console.WriteLine("Try again! Not the correct answer!\n");
+                Console.WriteLine("\nTry again! Not the correct answer!\n");
             }
             else
             {
-                Console.Clear();
-                Console.WriteLine("Correct!\n");
+                Console.WriteLine("\nCorrect! Press any key to proceed.\n");
+                Console.ReadKey(true);
                 CorrectAnswer = true;
+                Console.Clear();
             }
         }
     }

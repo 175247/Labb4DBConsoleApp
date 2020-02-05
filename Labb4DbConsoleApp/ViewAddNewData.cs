@@ -60,7 +60,8 @@ namespace Labb4DbConsoleApp
                     "Select either A, B, C or D:");
 
                 var userInput = Console.ReadKey().Key;
-                switch (userInput)
+                switch (userInput) //Byt ut detta till en metod som tar in en ConsoleKey och gör om det till ett index.
+                    //och en early exit för att ersätta default
                 {
                     case ConsoleKey.A:
                         newAnswerList[0].IsCorrectAnswer = true;

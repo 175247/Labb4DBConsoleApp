@@ -37,7 +37,7 @@ namespace Labb4DbConsoleApp
 
             viewPlayGame = new ViewPlayGame
             {
-                questionsList = UpdateGameResources_Questions(),
+                questionsList = UpdateGameResourcesQuestions(),
                 GetQuestions = GetQuestions,
                 Navigation = MainMenu,
                 ValidateAnswer = ValidateAnswer
@@ -53,7 +53,7 @@ namespace Labb4DbConsoleApp
 
         private void MainMenu()
         {
-            UpdateGameResources_Questions();
+            UpdateGameResourcesQuestions();
             viewMainMenu.UpdateDisplay();
         }
 
@@ -121,13 +121,12 @@ namespace Labb4DbConsoleApp
         private void SaveChangesAndUpdateLists()
         {
             modelContext.SaveChanges();
-            UpdateGameResources_Questions();
+            UpdateGameResourcesQuestions();
             MainMenu();
         }
 
-        private List<Question> UpdateGameResources_Questions()
+        private List<Question> UpdateGameResourcesQuestions()
         {
-            Console.WriteLine("Loading resources...");
             return questionsList = modelContext.Questions.ToList();
         }
 

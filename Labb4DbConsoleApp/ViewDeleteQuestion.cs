@@ -38,7 +38,7 @@ namespace Labb4DbConsoleApp
             {
                 Int32.TryParse(userInput, out choice);
 
-                var answersToDelete = modelContext.Answers.
+                var answersToDelete = modelContext.Answers. //vyn ska inte arbeta mot modelle, endast delegates ifrån controllern.
                     Where(a => a.QuestionId == questionsList[choice - 1].id);
 
                 foreach (var answer in answersToDelete)
@@ -46,7 +46,7 @@ namespace Labb4DbConsoleApp
                     modelContext.Answers.Remove(answer);
                 }
 
-                modelContext.Questions.Remove(questionsList[choice - 1]);
+                modelContext.Questions.Remove(questionsList[choice - 1]); //detta stycket bör ta in userinput efter tryparse
                 Console.Clear();
             }
             catch (Exception)
