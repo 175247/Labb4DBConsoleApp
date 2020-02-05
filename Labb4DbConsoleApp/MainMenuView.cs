@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Labb4DbConsoleApp
 {
-    class ViewMainMenu
+    class MainMenuView
     {
         public Action PlayGame, AddNewData, DeleteQuestion;
 
@@ -36,7 +36,7 @@ namespace Labb4DbConsoleApp
                         break;
                     default:
                         Console.Clear();
-                        Console.WriteLine("Invalid input.\n");
+                        Console.WriteLine(" Invalid input.\n");
                         break;
                 }
             } while (input != ConsoleKey.E);

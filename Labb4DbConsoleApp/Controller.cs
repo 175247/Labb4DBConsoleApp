@@ -7,10 +7,10 @@ namespace Labb4DbConsoleApp
     class Controller
     {
         private GameContext modelContext;
-        private ViewAddNewData viewAddNewData;
-        private ViewDeleteQuestion viewDeleteQuestion;
-        private ViewMainMenu viewMainMenu;
-        private ViewPlayGame viewPlayGame;
+        private AddNewDataView viewAddNewData;
+        private DeleteQuestionView deleteQuestionView;
+        private MainMenuView mainMenuView;
+        private PlayGameView playGameView;
         private List<Question> questionsList;
 
         public Controller(GameContext modelContext)
@@ -28,43 +28,43 @@ namespace Labb4DbConsoleApp
 
         public void Initialize()
         {
-            viewMainMenu = new ViewMainMenu
+            mainMenuView = new MainMenuView
             {
                 PlayGame = PlayGame,
                 AddNewData = AddNewData,
                 DeleteQuestion = DeleteQuestion
             };
 
-            viewPlayGame = new ViewPlayGame
+            playGameView = new PlayGameView
             {
-                questionsList = UpdateGameResources_Questions(),
-                GetQuestions = GetQuestions,
+                questionsList = UpdateGameResourcesQuestions(),
+                GetQuestions = UpdateGameResourcesQuestions,
                 Navigation = MainMenu,
                 ValidateAnswer = ValidateAnswer
             };
 
-            viewDeleteQuestion = new ViewDeleteQuestion
+            deleteQuestionView = new DeleteQuestionView
             {
                 modelContext = modelContext,
-                GetQuestions = GetQuestions,
-                Navigation = SaveChangesAndUpdateLists
+                GetQuestions = UpdateGameResourcesQuestions,
+                PerformDeletion = PerformDeletion
             };
         }
 
         private void MainMenu()
         {
-            UpdateGameResources_Questions();
-            viewMainMenu.UpdateDisplay();
+            UpdateGameResourcesQuestions();
+            mainMenuView.UpdateDisplay();
         }
 
         private void PlayGame()
         {
-            viewPlayGame.UpdateDisplay();
+            playGameView.UpdateDisplay();
         }
 
         private void AddNewData()
         {
-            viewAddNewData = new ViewAddNewData
+            viewAddNewData = new AddNewDataView
             {
                 newQuestion = new Question(),
                 newAnswerList = new List<Answer>(),
@@ -76,7 +76,7 @@ namespace Labb4DbConsoleApp
 
         private void DeleteQuestion()
         {
-            viewDeleteQuestion.UpdateDisplay();
+            deleteQuestionView.UpdateDisplay();
         }
 
         public string ValidateInput()
@@ -109,6 +109,32 @@ namespace Labb4DbConsoleApp
             }
             return userInput;
         }
+
+        private void PerformDeletion(int choice)
+        {
+            try
+            {
+                var answersToDelete = modelContext.Answers.
+                        Where(a => a.QuestionId == questionsList[choice - 1].id);
+
+                foreach (var answer in answersToDelete)
+                {
+                    modelContext.Answers.Remove(answer);
+                }
+
+                modelContext.Questions.Remove(questionsList[choice - 1]);
+                SaveChangesAndUpdateLists();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unable to delete question.\n" +
+                    "Make sure the index exists.");
+            }
+            finally
+            {
+                MainMenu();
+            }
+        }
         
         public void UploadToDatabase(Question newQuestion)
         {
@@ -121,19 +147,13 @@ namespace Labb4DbConsoleApp
         private void SaveChangesAndUpdateLists()
         {
             modelContext.SaveChanges();
-            UpdateGameResources_Questions();
+            UpdateGameResourcesQuestions();
             MainMenu();
         }
 
-        private List<Question> UpdateGameResources_Questions()
+        private List<Question> UpdateGameResourcesQuestions()
         {
-            Console.WriteLine("Loading resources...");
             return questionsList = modelContext.Questions.ToList();
-        }
-
-        public List<Question> GetQuestions()
-        {
-            return questionsList;
         }
 
         public bool ValidateAnswer(Answer answer)

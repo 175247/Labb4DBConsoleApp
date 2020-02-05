@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Labb4DbConsoleApp
 {
-    class ViewPlayGame
+    class PlayGameView
     {
         public List<Question> questionsList;
         public Func<Answer, bool> ValidateAnswer;
@@ -17,6 +17,7 @@ namespace Labb4DbConsoleApp
         {
             Console.Clear();
             CorrectAnswer = false;
+            Console.WriteLine("Updating resources...");
             questionsList = GetQuestions();
 
             foreach (var question in questionsList)
@@ -40,17 +41,30 @@ namespace Labb4DbConsoleApp
                     {
                         Console.Clear();
                         Console.WriteLine("Question skipped.\n" +
-                            $"The correct answer was \"{question.CorrectAnswer.TheAnswer}\".\n");
-                        Thread.Sleep(3000);
+                            $"The correct answer was \"{question.CorrectAnswer.TheAnswer}\".\n" +
+                            $"Press any key to continue.");
+                        Console.ReadKey();
                         break;
                     }
                     else
                     {
+                        if (userInput != ConsoleKey.A &&
+                            userInput != ConsoleKey.B &&
+                            userInput != ConsoleKey.C &&
+                            userInput != ConsoleKey.D &&
+                            userInput != ConsoleKey.S &&
+                            userInput != ConsoleKey.E ||
+                            userInput == ConsoleKey.Escape)
+                        {
+                            Console.WriteLine("\nInvalid input. Press any key to continue.");
+                            Console.ReadKey();
+                            continue;
+                        }
                         CheckUserAnswer(thisQuestionsAnswerList, userInput);
                     }
                 } while (CorrectAnswer == false);
             }
-            Console.WriteLine("End of questions. Good job!\n\n" +
+            Console.WriteLine("\nEnd of questions. Good job!\n\n" +
                 "Loading main menu...");
             Thread.Sleep(3000);
             Console.Clear();
@@ -76,20 +90,26 @@ namespace Labb4DbConsoleApp
                 case ConsoleKey.E:
                     Navigation();
                     break;
+                case ConsoleKey.Escape:
+                    Console.WriteLine("\nInvalid input. Press any key to continue.\n");
+                    Console.ReadKey();
+                    break;
                 default:
-                    Console.WriteLine("Invalid input.");
+                    Console.WriteLine("\nInvalid input. Press any key to continue.\n");
+                    Console.ReadKey();
                     break;
             }
             if (CorrectAnswer == false)
             {
                 Console.Clear();
-                Console.WriteLine("Try again! Not the correct answer!\n");
+                Console.WriteLine("\nTry again! Not the correct answer!\n");
             }
             else
             {
-                Console.Clear();
-                Console.WriteLine("Correct!\n");
+                Console.WriteLine("\nCorrect! Press any key to proceed.\n");
+                Console.ReadKey(true);
                 CorrectAnswer = true;
+                Console.Clear();
             }
         }
     }
