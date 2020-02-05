@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Labb4DbConsoleApp
 {
-    class ViewDeleteQuestion
+    class DeleteQuestionView
     {
         public GameContext modelContext;
         public List<Question> questionsList;
@@ -38,15 +38,6 @@ namespace Labb4DbConsoleApp
             {
                 Int32.TryParse(userInput, out choice);
                 PerformDeletion(choice);
-                //var answersToDelete = modelContext.Answers. //vyn ska inte arbeta mot modelle, endast delegates ifrån controllern.
-                //    Where(a => a.QuestionId == questionsList[choice - 1].id);
-                //
-                //foreach (var answer in answersToDelete)
-                //{
-                //    modelContext.Answers.Remove(answer);
-                //}
-                //
-                //modelContext.Questions.Remove(questionsList[choice - 1]); //detta stycket bör ta in userinput efter tryparse
                 Console.Clear();
             }
             catch (Exception)
