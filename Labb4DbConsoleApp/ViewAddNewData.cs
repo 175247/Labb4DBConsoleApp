@@ -41,7 +41,7 @@ namespace Labb4DbConsoleApp
                 });
 
                 Console.Clear();
-                Console.WriteLine($"Option {i} set\n");
+                Console.WriteLine($"Option {i} set.\n");
             }
         }
 
@@ -84,7 +84,7 @@ namespace Labb4DbConsoleApp
                         break;
                     default:
                         Console.Clear();
-                        Console.WriteLine("Invalid answer.");
+                        Console.WriteLine("Invalid selection.");
                         break;
                 }
             } while (IsCorrectAnswerSet == false);

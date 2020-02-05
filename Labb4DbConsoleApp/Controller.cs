@@ -82,7 +82,7 @@ namespace Labb4DbConsoleApp
         public string ValidateInput()
         {
             bool acceptedString = false;
-            string userInput = "Unable To Validate Input";
+            string userInput = "Unable To Validate Input.";
             while (acceptedString == false)
             {
                 userInput = Console.ReadLine();
