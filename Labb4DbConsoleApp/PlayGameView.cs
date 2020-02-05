@@ -11,7 +11,6 @@ namespace Labb4DbConsoleApp
         public Func<Answer, bool> ValidateAnswer;
         public Func<List<Question>> GetQuestions;
         public Action Navigation;
-        public GameContext context;
         public bool CorrectAnswer { get; set; } = false;
         
         public void UpdateDisplay()

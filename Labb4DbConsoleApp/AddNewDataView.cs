@@ -79,7 +79,6 @@ namespace Labb4DbConsoleApp
             }
             else
             {
-                Console.WriteLine("OK This works! :D");
                 Console.ReadKey();
                 var userInputString = key.ToString();
                 int index = Int32.Parse(userInputString.Substring(userInputString.Length - 1));

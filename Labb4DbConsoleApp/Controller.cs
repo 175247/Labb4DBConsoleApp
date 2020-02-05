@@ -40,8 +40,7 @@ namespace Labb4DbConsoleApp
                 questionsList = UpdateGameResourcesQuestions(),
                 GetQuestions = UpdateGameResourcesQuestions,
                 Navigation = MainMenu,
-                ValidateAnswer = ValidateAnswer,
-                context = modelContext
+                ValidateAnswer = ValidateAnswer
             };
 
             deleteQuestionView = new DeleteQuestionView
@@ -156,11 +155,6 @@ namespace Labb4DbConsoleApp
         {
             return questionsList = modelContext.Questions.ToList();
         }
-
-        //public List<Question> GetQuestions()
-        //{
-        //    return questionsList;
-        //}
 
         public bool ValidateAnswer(Answer answer)
         {
