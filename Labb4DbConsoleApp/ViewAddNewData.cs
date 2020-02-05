@@ -59,7 +59,6 @@ namespace Labb4DbConsoleApp
                     $"[D]: {newAnswerList[3].TheAnswer}\n\n" +
                     "Select either A, B, C or D:");
 
-                //string userInput = ValidateInput();
                 var userInput = Console.ReadKey().Key;
                 switch (userInput)
                 {

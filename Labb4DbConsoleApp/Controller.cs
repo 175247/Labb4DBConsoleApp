@@ -21,37 +21,44 @@ namespace Labb4DbConsoleApp
         public void Run()
         {
             Console.WriteLine("Starting up...");
+            modelContext.Database.EnsureCreated();
+            Initialize();
             MainMenu();
+        }
+
+        public void Initialize()
+        {
+            viewMainMenu = new ViewMainMenu
+            {
+                PlayGame = PlayGame,
+                AddNewData = AddNewData,
+                DeleteQuestion = DeleteQuestion
+            };
+
+            viewPlayGame = new ViewPlayGame
+            {
+                questionsList = UpdateGameResources_Questions(),
+                GetQuestions = GetQuestions,
+                Navigation = MainMenu,
+                ValidateAnswer = ValidateAnswer
+            };
+
+            viewDeleteQuestion = new ViewDeleteQuestion
+            {
+                modelContext = modelContext,
+                GetQuestions = GetQuestions,
+                Navigation = SaveChangesAndUpdateLists
+            };
         }
 
         private void MainMenu()
         {
-            if (viewMainMenu == null)
-            {
-                viewMainMenu = new ViewMainMenu
-                {
-                    PlayGame = PlayGame,
-                    AddNewData = AddNewData,
-                    DeleteQuestion = DeleteQuestion
-                };
-            }
             UpdateGameResources_Questions();
             viewMainMenu.UpdateDisplay();
         }
 
         private void PlayGame()
         {
-            if (viewPlayGame == null)
-            {
-                Console.WriteLine("\nLoading resources...");
-                viewPlayGame = new ViewPlayGame
-                {
-                    questionsList = UpdateGameResources_Questions(),
-                    GetQuestions = GetQuestions,
-                    Navigation = MainMenu,
-                    ValidateAnswer = ValidateAnswer
-                };
-            }
             viewPlayGame.UpdateDisplay();
         }
 
@@ -69,15 +76,6 @@ namespace Labb4DbConsoleApp
 
         private void DeleteQuestion()
         {
-            if (viewDeleteQuestion == null)
-            {
-                viewDeleteQuestion = new ViewDeleteQuestion
-                {
-                    modelContext = modelContext,
-                    GetQuestions = GetQuestions,
-                    Navigation = SaveChangesAndUpdateLists
-                };
-            }
             viewDeleteQuestion.UpdateDisplay();
         }
 
@@ -122,15 +120,14 @@ namespace Labb4DbConsoleApp
 
         private void SaveChangesAndUpdateLists()
         {
-            Console.WriteLine("\nUpdating database and game resources...");
             modelContext.SaveChanges();
             UpdateGameResources_Questions();
-            Console.WriteLine("Finished!\n");
             MainMenu();
         }
 
         private List<Question> UpdateGameResources_Questions()
         {
+            Console.WriteLine("Loading resources...");
             return questionsList = modelContext.Questions.ToList();
         }
 
