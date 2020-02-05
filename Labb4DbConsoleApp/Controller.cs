@@ -47,7 +47,7 @@ namespace Labb4DbConsoleApp
             {
                 modelContext = modelContext,
                 GetQuestions = GetQuestions,
-                Navigation = SaveChangesAndUpdateLists
+                PerformDeletion = PerformDeletion
             };
         }
 
@@ -108,6 +108,20 @@ namespace Labb4DbConsoleApp
                 }
             }
             return userInput;
+        }
+
+        private void PerformDeletion(int choice)
+        {
+            var answersToDelete = modelContext.Answers.
+                    Where(a => a.QuestionId == questionsList[choice - 1].id);
+
+            foreach (var answer in answersToDelete)
+            {
+                modelContext.Answers.Remove(answer);
+            }
+
+            modelContext.Questions.Remove(questionsList[choice - 1]);
+            SaveChangesAndUpdateLists();
         }
         
         public void UploadToDatabase(Question newQuestion)

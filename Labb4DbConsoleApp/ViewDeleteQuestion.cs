@@ -10,7 +10,7 @@ namespace Labb4DbConsoleApp
         public GameContext modelContext;
         public List<Question> questionsList;
         public Func<List<Question>> GetQuestions;
-        public Action Navigation;
+        public Action<int> PerformDeletion;
 
         public void UpdateDisplay()
         {
@@ -37,16 +37,16 @@ namespace Labb4DbConsoleApp
             try
             {
                 Int32.TryParse(userInput, out choice);
-
-                var answersToDelete = modelContext.Answers. //vyn ska inte arbeta mot modelle, endast delegates ifrån controllern.
-                    Where(a => a.QuestionId == questionsList[choice - 1].id);
-
-                foreach (var answer in answersToDelete)
-                {
-                    modelContext.Answers.Remove(answer);
-                }
-
-                modelContext.Questions.Remove(questionsList[choice - 1]); //detta stycket bör ta in userinput efter tryparse
+                PerformDeletion(choice);
+                //var answersToDelete = modelContext.Answers. //vyn ska inte arbeta mot modelle, endast delegates ifrån controllern.
+                //    Where(a => a.QuestionId == questionsList[choice - 1].id);
+                //
+                //foreach (var answer in answersToDelete)
+                //{
+                //    modelContext.Answers.Remove(answer);
+                //}
+                //
+                //modelContext.Questions.Remove(questionsList[choice - 1]); //detta stycket bör ta in userinput efter tryparse
                 Console.Clear();
             }
             catch (Exception)
@@ -55,7 +55,6 @@ namespace Labb4DbConsoleApp
                 Console.WriteLine("Invalid input.\n" +
                     "Returning to main menu.\n");
             }
-            Navigation();
         }
     }
 }
